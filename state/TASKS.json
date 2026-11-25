@@ -1,0 +1,169 @@
+[
+  {
+    "id": "F01",
+    "description": "Foundation and resource-safe development setup",
+    "priority": 1,
+    "dependencies": [],
+    "assignedRole": "PROJECT_MANAGER",
+    "acceptanceCriteria": [
+      "Implementation exists and relevant tests pass; evidence is recorded in docs/TEST_REPORT.md."
+    ],
+    "status": "IN_PROGRESS",
+    "attempts": 1,
+    "lastUpdated": "2026-11-25T00:00:00Z"
+  },
+  {
+    "id": "G01",
+    "description": "Research and acquire Ph\u00fa Qu\u00fd geography",
+    "priority": 2,
+    "dependencies": [
+      "F01"
+    ],
+    "assignedRole": "GEOGRAPHIC_RESEARCHER",
+    "acceptanceCriteria": [
+      "Implementation exists and relevant tests pass; evidence is recorded in docs/TEST_REPORT.md."
+    ],
+    "status": "BACKLOG",
+    "attempts": 0,
+    "lastUpdated": "2026-11-25T00:00:00Z"
+  },
+  {
+    "id": "A01",
+    "description": "Acquire and validate licensed 3D assets",
+    "priority": 3,
+    "dependencies": [
+      "F01"
+    ],
+    "assignedRole": "ASSET_ACQUISITION_AGENT",
+    "acceptanceCriteria": [
+      "Implementation exists and relevant tests pass; evidence is recorded in docs/TEST_REPORT.md."
+    ],
+    "status": "BACKLOG",
+    "attempts": 0,
+    "lastUpdated": "2026-11-25T00:00:00Z"
+  },
+  {
+    "id": "W01",
+    "description": "Render terrain ocean settlements vegetation and landmarks",
+    "priority": 4,
+    "dependencies": [
+      "G01",
+      "A01"
+    ],
+    "assignedRole": "WORLD_DESIGNER",
+    "acceptanceCriteria": [
+      "Implementation exists and relevant tests pass; evidence is recorded in docs/TEST_REPORT.md."
+    ],
+    "status": "BACKLOG",
+    "attempts": 0,
+    "lastUpdated": "2026-11-25T00:00:00Z"
+  },
+  {
+    "id": "C01",
+    "description": "Camera construction roads zoning selection and bulldozing",
+    "priority": 5,
+    "dependencies": [
+      "W01"
+    ],
+    "assignedRole": "GAMEPLAY_DEVELOPER",
+    "acceptanceCriteria": [
+      "Implementation exists and relevant tests pass; evidence is recorded in docs/TEST_REPORT.md."
+    ],
+    "status": "BACKLOG",
+    "attempts": 0,
+    "lastUpdated": "2026-11-25T00:00:00Z"
+  },
+  {
+    "id": "S01",
+    "description": "Population economy services logistics and weather simulation",
+    "priority": 6,
+    "dependencies": [
+      "F01"
+    ],
+    "assignedRole": "GAMEPLAY_DEVELOPER",
+    "acceptanceCriteria": [
+      "Implementation exists and relevant tests pass; evidence is recorded in docs/TEST_REPORT.md."
+    ],
+    "status": "BACKLOG",
+    "attempts": 0,
+    "lastUpdated": "2026-11-25T00:00:00Z"
+  },
+  {
+    "id": "U01",
+    "description": "Menus HUD inspectors and management panels",
+    "priority": 7,
+    "dependencies": [
+      "C01",
+      "S01"
+    ],
+    "assignedRole": "UI_DEVELOPER",
+    "acceptanceCriteria": [
+      "Implementation exists and relevant tests pass; evidence is recorded in docs/TEST_REPORT.md."
+    ],
+    "status": "BACKLOG",
+    "attempts": 0,
+    "lastUpdated": "2026-11-25T00:00:00Z"
+  },
+  {
+    "id": "P01",
+    "description": "Versioned saves recovery import export settings",
+    "priority": 8,
+    "dependencies": [
+      "S01"
+    ],
+    "assignedRole": "GAMEPLAY_DEVELOPER",
+    "acceptanceCriteria": [
+      "Implementation exists and relevant tests pass; evidence is recorded in docs/TEST_REPORT.md."
+    ],
+    "status": "BACKLOG",
+    "attempts": 0,
+    "lastUpdated": "2026-11-25T00:00:00Z"
+  },
+  {
+    "id": "O01",
+    "description": "Bounded persistent orchestration and recovery",
+    "priority": 9,
+    "dependencies": [
+      "F01"
+    ],
+    "assignedRole": "PROJECT_MANAGER",
+    "acceptanceCriteria": [
+      "Implementation exists and relevant tests pass; evidence is recorded in docs/TEST_REPORT.md."
+    ],
+    "status": "BACKLOG",
+    "attempts": 0,
+    "lastUpdated": "2026-11-25T00:00:00Z"
+  },
+  {
+    "id": "Q01",
+    "description": "Unit integration browser visual and performance verification",
+    "priority": 10,
+    "dependencies": [
+      "U01",
+      "P01"
+    ],
+    "assignedRole": "QA_ENGINEER",
+    "acceptanceCriteria": [
+      "Implementation exists and relevant tests pass; evidence is recorded in docs/TEST_REPORT.md."
+    ],
+    "status": "BACKLOG",
+    "attempts": 0,
+    "lastUpdated": "2026-11-25T00:00:00Z"
+  },
+  {
+    "id": "R01",
+    "description": "Balance polish compatibility production build and release",
+    "priority": 11,
+    "dependencies": [
+      "Q01",
+      "O01"
+    ],
+    "assignedRole": "PERFORMANCE_ENGINEER",
+    "acceptanceCriteria": [
+      "Implementation exists and relevant tests pass; evidence is recorded in docs/TEST_REPORT.md."
+    ],
+    "status": "BACKLOG",
+    "attempts": 0,
+    "lastUpdated": "2026-11-25T00:00:00Z"
+  }
+]

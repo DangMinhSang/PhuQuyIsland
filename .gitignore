@@ -1,0 +1,16 @@
+node_modules/
+dist/
+*.tsbuildinfo
+logs/*
+!logs/.gitkeep
+state/checkpoints/*
+!state/checkpoints/.gitkeep
+state/*.lock
+state/SESSION.json
+__pycache__/
+.env*
+*.zip
+playwright-report/
+test-results/
+.DS_Store
+.tools/

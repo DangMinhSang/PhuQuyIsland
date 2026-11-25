@@ -1,0 +1,32 @@
+{
+  "project": "PHU QUY ISLAND",
+  "version": "0.1.0-dev",
+  "phase": 0,
+  "currentTask": "F01",
+  "completed": [],
+  "next": [
+    "G01",
+    "A01",
+    "S01"
+  ],
+  "knownIssues": [
+    "Objective source ends mid-sentence.",
+    "Browser gameplay and visual QA remain incomplete after a screenshot timeout.",
+    "Production build passes with a Three.js bundle-size warning; clean npm ci remains unverified.",
+    "Public deployment has not been configured or verified."
+  ],
+  "repository": {
+    "origin": "https://github.com/DangMinhSang/PhuQuyIsland",
+    "branch": "main"
+  },
+  "verification": {
+    "productionBuild": "passed",
+    "lint": "passed",
+    "vitestPassed": 34,
+    "pythonTestsPassed": 8,
+    "validatedModels": 17,
+    "browserQA": "incomplete",
+    "evidence": "docs/TEST_REPORT.md"
+  },
+  "lastUpdated": "2026-11-25"
+}
