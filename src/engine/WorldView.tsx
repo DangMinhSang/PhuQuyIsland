@@ -66,7 +66,7 @@ function label(text: string, subtitle = ''): THREE.Sprite {
 }
 
 interface Car { mesh: THREE.Group; path: Point[]; index: number; t: number; speed: number }
-interface Diagnostics { fps: number; calls: number; triangles: number; assets: number }
+interface Diagnostics { fps: number; calls: number; triangles: number; assets: number; onDemand: boolean }
 
 class IslandRenderer {
   renderer: THREE.WebGLRenderer;
@@ -112,13 +112,15 @@ class IslandRenderer {
   lastFrame = 0;
   lastStats = 0;
   frames = 0;
+  renderNeeded = true;
+  lastRender = 0;
   overview = false;
   updateStats: (d: Diagnostics) => void;
   updateHint: (hint: string) => void;
 
   constructor(public host: HTMLDivElement, updateStats: (d: Diagnostics) => void, updateHint: (hint: string) => void) {
     this.updateStats = updateStats; this.updateHint = updateHint;
-    this.renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'low-power', alpha: false });
+    this.renderer = new THREE.WebGLRenderer({ antialias: useGame.getState().game.settings.quality !== 'low', powerPreference: 'low-power', alpha: false });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); this.renderer.outputColorSpace = THREE.SRGBColorSpace; this.renderer.toneMapping = THREE.ACESFilmicToneMapping; this.renderer.toneMappingExposure = 1.15;
     this.renderer.shadowMap.enabled = true; this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.renderer.domElement.setAttribute('aria-label', 'Interactive 3D map of Phú Quý Island'); this.renderer.domElement.setAttribute('role', 'img'); this.renderer.domElement.tabIndex = 0;
@@ -127,6 +129,7 @@ class IslandRenderer {
     this.camera.position.set(430, 475, 620);
     this.controls = new OrbitControls(this.camera, this.renderer.domElement); this.controls.target.set(35, 0, 30); this.controls.enableDamping = true; this.controls.dampingFactor = .08; this.controls.maxPolarAngle = Math.PI * .46; this.controls.minPolarAngle = .16; this.controls.minDistance = 40; this.controls.maxDistance = 1250;
     this.controls.mouseButtons = { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.ROTATE, RIGHT: THREE.MOUSE.PAN }; this.controls.panSpeed = .8; this.controls.zoomSpeed = .8;
+    this.controls.addEventListener('change', this.invalidate);
     this.scene.add(this.ambient, this.sun, this.world); this.sun.position.set(-250, 430, 190); this.sun.castShadow = true; this.sun.shadow.mapSize.set(1024, 1024); this.sun.shadow.camera.left = -300; this.sun.shadow.camera.right = 300; this.sun.shadow.camera.top = 350; this.sun.shadow.camera.bottom = -350; this.sun.shadow.camera.far = 1200; this.sun.shadow.normalBias = .5; this.sun.shadow.bias = -.0003;
     const terrain = createTerrain(); this.land = terrain.land;
     this.world.add(this.ocean.ocean, terrain.group, this.buildings, this.roadMeshes, this.zones, this.traffic, this.labels, this.clouds, this.decoration, this.ghost, this.roadGhost, this.selection);
@@ -151,10 +154,11 @@ class IslandRenderer {
         const point = new THREE.Vector3(p.x, Math.max(0, heightAt(p)) + elevation, p.z).project(this.camera);
         const bounds = canvas.getBoundingClientRect(); return { x: bounds.left + (point.x + 1) / 2 * bounds.width, y: bounds.top + (1 - point.y) / 2 * bounds.height };
       },
-      inspect: () => ({ assets: Object.keys(this.models).length, calls: this.renderer.info.render.calls, triangles: this.renderer.info.render.triangles, geometries: this.renderer.info.memory.geometries, textures: this.renderer.info.memory.textures, camera: this.camera.position.toArray(), target: this.controls.target.toArray() }),
+      inspect: () => ({ assets: Object.keys(this.models).length, calls: this.renderer.info.render.calls, triangles: this.renderer.info.render.triangles, geometries: this.renderer.info.memory.geometries, textures: this.renderer.info.memory.textures, renderFrames: this.renderer.info.render.frame, pendingRender: this.renderNeeded, keys: [...this.keys], camera: this.camera.position.toArray(), target: this.controls.target.toArray() }),
     } });
     this.applySettings();
     this.unsubscribe = useGame.subscribe((state, previous) => {
+      this.invalidate();
       if (state.game.buildings !== previous.game.buildings && this.models.houseA) { this.syncBuildings(state.game); this.syncTraffic(state.game); }
       if (state.game.roads !== previous.game.roads && this.models.houseA) { this.syncRoads(state.game); this.syncTraffic(state.game); }
       if (state.game.zones !== previous.game.zones || state.layer !== previous.layer) { this.syncZones(state.game); if (state.layer !== previous.layer && this.models.houseA) this.syncBuildings(state.game); }
@@ -170,6 +174,7 @@ class IslandRenderer {
       Object.values(models).forEach(model => model.traverse(node => { if (node instanceof THREE.Mesh) { this.sharedGeometry.add(node.geometry); (Array.isArray(node.material) ? node.material : [node.material]).forEach(mat => this.sharedMaterials.add(mat)); } }));
       const game = useGame.getState().game;
       this.syncBuildings(game); this.syncRoads(game); this.syncZones(game); this.syncTraffic(game); this.createVegetation(); this.createBoats();
+      this.invalidate();
       useGame.getState().notify('Your island is ready. Select an address to inspect it.');
     }).catch(error => { console.error('Model loading failed', error); useGame.getState().notify('Some 3D assets could not load. Reload when the connection is available.'); });
     this.frame = requestAnimationFrame(this.animate);
@@ -178,10 +183,15 @@ class IslandRenderer {
     const width = this.host.clientWidth, height = this.host.clientHeight;
     if (!width || !height) return;
     this.renderer.setSize(width, height); this.camera.aspect = width / height; this.camera.updateProjectionMatrix();
+    this.invalidate();
   };
+  invalidate = () => { this.renderNeeded = true; };
   applySettings() {
     const s = useGame.getState().game.settings;
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, s.quality === 'low' ? 1 : s.quality === 'high' ? 2 : 1.5)); this.renderer.shadowMap.enabled = s.shadows && s.quality !== 'low'; this.labels.visible = s.quality !== 'low'; this.clouds.visible = s.quality !== 'low'; this.resize();
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, s.quality === 'low' ? .65 : s.quality === 'high' ? 2 : 1.5)); this.renderer.shadowMap.enabled = s.shadows && s.quality !== 'low'; this.labels.visible = s.quality !== 'low'; this.clouds.visible = s.quality !== 'low';
+    for (const batch of this.vegetation) batch.mesh.count = Math.ceil(batch.points.length * (s.quality === 'low' ? .35 : s.quality === 'medium' ? .75 : 1));
+    if (this.models.car) this.syncTraffic(useGame.getState().game);
+    this.resize();
   }
   syncBuildings(game: Game) {
     // Loaded glTF geometry/materials are shared and remain cached across city updates.
@@ -259,6 +269,8 @@ class IslandRenderer {
   }
   registerVegetation(mesh: THREE.InstancedMesh, points: Point[]) {
     const matrices = points.map((_, i) => { const matrix = new THREE.Matrix4(); mesh.getMatrixAt(i, matrix); return matrix; }); this.vegetation.push({ mesh, points, matrices });
+    const quality = useGame.getState().game.settings.quality;
+    mesh.count = Math.ceil(points.length * (quality === 'low' ? .35 : quality === 'medium' ? .75 : 1));
   }
   clearVegetation(game: Game) {
     const hidden = new THREE.Matrix4().makeScale(0, 0, 0), roads = game.roads.flatMap(r => r.points);
@@ -313,6 +325,7 @@ class IslandRenderer {
   contextMenu = (e: MouseEvent) => e.preventDefault();
   contextLost = (e: Event) => { e.preventDefault(); useGame.getState().setSpeed(0); useGame.getState().notify('3D context lost. Save your island from the menu, then reload.'); };
   updateGhost() {
+    this.invalidate();
     const s = useGame.getState(), tool = s.tool;
     this.ghost.visible = !!this.hover && s.screen === 'playing' && tool !== 'inspect' && tool !== 'road'; this.roadGhost.visible = !!this.hover && !!s.roadStart && tool === 'road';
     if (!this.hover || s.screen !== 'playing') return;
@@ -367,8 +380,8 @@ class IslandRenderer {
     }
     this.controls.target.x = THREE.MathUtils.clamp(this.controls.target.x, -550, 550); this.controls.target.z = THREE.MathUtils.clamp(this.controls.target.z, -550, 550); this.controls.update();
     const day = .22 + .78 * Math.max(0, Math.sin((game.hour - 5) / 24 * Math.PI * 2));
-    this.sun.intensity += ((game.weather === 'storm' ? 1 : 2.6) * day - this.sun.intensity) * .015; this.ambient.intensity = .8 + day * 1.3;
-    this.ocean.uniforms.daylight.value += (day - this.ocean.uniforms.daylight.value) * .01; this.ocean.uniforms.storm.value = game.weather === 'storm' ? 1 : 0; if (motion) this.ocean.uniforms.time.value = now / 1000;
+    this.sun.intensity += ((game.weather === 'storm' ? 1 : 2.6) * day - this.sun.intensity) * (motion ? .015 : 1); this.ambient.intensity = .8 + day * 1.3;
+    this.ocean.uniforms.daylight.value += (day - this.ocean.uniforms.daylight.value) * (motion ? .01 : 1); this.ocean.uniforms.storm.value = game.weather === 'storm' ? 1 : 0; if (motion) this.ocean.uniforms.time.value = now / 1000;
     this.rain.visible = game.weather === 'rain' || game.weather === 'storm';
     if (this.rain.visible && motion) { const pos = this.rain.geometry.getAttribute('position'); for (let i = 0; i < pos.count; i++) { let y = pos.getY(i) - dt * 90; if (y < 0) y = 160; pos.setY(i, y); } pos.needsUpdate = true; }
     if (motion && active && s.speed) {
@@ -383,15 +396,20 @@ class IslandRenderer {
     }
     this.boats.forEach((boat, i) => {
       const angle = (motion ? now / 70000 : 0) + i * 1.07, x = -155 - Math.cos(angle) * (70 + i * 15), z = 230 + Math.sin(angle) * 50;
-      boat.visible = !inside({ x, z }) && game.weather !== 'storm'; boat.position.set(x, -.1 + Math.sin(now / 900 + i) * .15, z); boat.rotation.y = -angle; boat.rotation.z = Math.sin(now / 1200 + i) * .035;
+      boat.visible = !inside({ x, z }) && game.weather !== 'storm'; boat.position.set(x, -.1 + (motion ? Math.sin(now / 900 + i) * .15 : 0), z); boat.rotation.y = -angle; boat.rotation.z = motion ? Math.sin(now / 1200 + i) * .035 : 0;
     });
     if (motion) this.clouds.children.forEach((c, i) => { c.position.x += dt * (1 + i * .12); if (c.position.x > 700) c.position.x = -700; });
     this.labels.children.forEach(l => { (l as THREE.Sprite).material.opacity = this.camera.position.y < 120 ? .15 : .88; });
-    this.renderer.render(this.scene, this.camera); this.frames++;
-    if (now - this.lastStats > 1500) { this.updateStats({ fps: Math.round(this.frames / Math.max(.1, (now - this.lastStats) / 1000)), calls: this.renderer.info.render.calls, triangles: this.renderer.info.render.triangles, assets: Object.keys(this.models).length }); this.frames = 0; this.lastStats = now; }
+    // Reduced motion also avoids continuously repainting an unchanged world.
+    // Normal rendering is paced so software/integrated GPUs do not queue frames
+    // indefinitely while the browser is trying to composite the interface.
+    if ((motion || this.renderNeeded) && now - this.lastRender >= 1000 / (game.settings.quality === 'high' ? 60 : 30)) {
+      this.renderer.render(this.scene, this.camera); this.frames++; this.renderNeeded = false; this.lastRender = now;
+    }
+    if (now - this.lastStats > 1500) { this.updateStats({ fps: Math.round(this.frames / Math.max(.1, (now - this.lastStats) / 1000)), calls: this.renderer.info.render.calls, triangles: this.renderer.info.render.triangles, assets: Object.keys(this.models).length, onDemand: !motion }); this.frames = 0; this.lastStats = now; }
   };
   dispose() {
-    this.disposed = true; cancelAnimationFrame(this.frame); this.observer.disconnect(); this.unsubscribe(); this.controls.dispose();
+    this.disposed = true; cancelAnimationFrame(this.frame); this.observer.disconnect(); this.unsubscribe(); this.controls.removeEventListener('change', this.invalidate); this.controls.dispose();
     if (import.meta.env.DEV) Reflect.deleteProperty(window, '__PHU_QUY_VIEW__');
     const canvas = this.renderer.domElement;
     canvas.removeEventListener('pointerdown', this.pointerDown); canvas.removeEventListener('pointermove', this.pointerMove); canvas.removeEventListener('pointerup', this.pointerUp); canvas.removeEventListener('pointerleave', this.pointerLeave); canvas.removeEventListener('contextmenu', this.contextMenu); canvas.removeEventListener('webglcontextlost', this.contextLost);
@@ -401,7 +419,7 @@ class IslandRenderer {
 }
 
 export default function WorldView() {
-  const host = useRef<HTMLDivElement>(null), [error, setError] = useState(''), [hint, setHint] = useState(''), [diagnostics, setDiagnostics] = useState<Diagnostics>({ fps: 0, calls: 0, triangles: 0, assets: 0 });
+  const host = useRef<HTMLDivElement>(null), [error, setError] = useState(''), [hint, setHint] = useState(''), [diagnostics, setDiagnostics] = useState<Diagnostics>({ fps: 0, calls: 0, triangles: 0, assets: 0, onDemand: false });
   const screen = useGame(s => s.screen);
   useEffect(() => {
     let world: IslandRenderer | undefined;
@@ -412,6 +430,6 @@ export default function WorldView() {
   return <>
     <div className="world" ref={host} data-testid="world" />
     {error && <div className="graphics-error" role="alert"><h2>We could not start the 3D world.</h2><p>Enable WebGL2 or hardware acceleration in a desktop browser, then reload.</p><small>{error}</small><button onClick={() => location.reload()}>Try again</button></div>}
-    {screen === 'playing' && <><div className="world-hint" aria-live="polite">{hint}</div><div className="diagnostics" title="Measured render rate, draw calls, triangles and loaded model prototypes"><span className={diagnostics.fps < 25 ? 'amber' : ''}>{diagnostics.fps} FPS</span><span>{diagnostics.calls} draws</span><span>{Math.round(diagnostics.triangles / 1000)}k tris</span><span>{diagnostics.assets} models</span></div></>}
+    {screen === 'playing' && <><div className="world-hint" aria-live="polite">{hint}</div><div className="diagnostics" title="Measured render rate, draw calls, triangles and loaded model prototypes. Reduced motion renders on demand."><span className={!diagnostics.onDemand && diagnostics.fps < 25 ? 'amber' : ''}>{diagnostics.onDemand ? 'On demand' : `${diagnostics.fps} FPS`}</span><span>{diagnostics.calls} draws</span><span>{Math.round(diagnostics.triangles / 1000)}k tris</span><span>{diagnostics.assets} models</span></div></>}
   </>;
 }

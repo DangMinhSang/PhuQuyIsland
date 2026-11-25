@@ -1,32 +1,42 @@
 {
   "project": "PHU QUY ISLAND",
   "version": "0.1.0-dev",
-  "phase": 0,
-  "currentTask": "F01",
-  "completed": [],
+  "phase": 8,
+  "currentTask": "Q01",
+  "completed": [
+    "F01"
+  ],
   "next": [
-    "G01",
-    "A01",
-    "S01"
+    "W01",
+    "C01",
+    "Q01",
+    "R01"
   ],
   "knownIssues": [
-    "Objective source ends mid-sentence.",
-    "Browser gameplay and visual QA remain incomplete after a screenshot timeout.",
-    "Production build passes with a Three.js bundle-size warning; clean npm ci remains unverified.",
-    "Public deployment has not been configured or verified."
+    "Objective source ends mid-sentence; sections 0–19 remain authoritative.",
+    "Public deployment and production/subdirectory hosting remain unverified.",
+    "Full realism and asset-category coverage remain incomplete; terrain and water need visual refinement.",
+    "Continuous-render FPS, repeated-edit resource bounds, bridge vehicle elevation and traffic capacity need further work.",
+    "Middle-drag orbit, all zoning classes, valid import, browser corruption recovery and autosave timing still need browser evidence.",
+    "Three.js production chunk exceeds 500 kB before gzip; npm flags pinned ESLint version as unsupported."
   ],
   "repository": {
-    "origin": "https://github.com/DangMinhSang/PhuQuyIsland",
-    "branch": "main"
+    "origin": "git@github.com:DangMinhSang/PhuQuyIsland.git",
+    "branch": "main",
+    "upstream": "origin/main",
+    "publishedCommit": "9a59a92"
   },
   "verification": {
     "productionBuild": "passed",
     "lint": "passed",
-    "vitestPassed": 34,
+    "vitestPassed": 36,
     "pythonTestsPassed": 8,
     "validatedModels": 17,
-    "browserQA": "incomplete",
-    "evidence": "docs/TEST_REPORT.md"
+    "browserQA": "Full existing desktop gameplay/save flow and compact layout passed; zero errors/warnings/HTTP failures; seven screenshots",
+    "evidence": "docs/TEST_REPORT.md",
+    "cleanInstall": "npm ci --ignore-scripts passed; npm ls --depth=0 passed; no damaged-lockfile warnings",
+    "browserEvidence": "/tmp/phu-quy-qa/report.json",
+    "continuousFPS": "unverified; on-demand counters are not an FPS benchmark"
   },
-  "lastUpdated": "2026-11-25"
+  "lastUpdated": "2026-11-25T15:29:59.906893+00:00"
 }

@@ -109,7 +109,10 @@ export function fishingBoat(): THREE.Group {
   g.traverse(node => {
     if (node instanceof THREE.Mesh && !Array.isArray(node.material)) {
       const parts = byMaterial.get(node.material) || [];
-      parts.push(node.geometry.clone().applyMatrix4(node.matrixWorld)); byMaterial.set(node.material, parts);
+      // Extruded hulls are non-indexed; boxes and floats are indexed. Use the
+      // same representation before merging parts that share a material.
+      const geometry = node.geometry.index ? node.geometry.toNonIndexed() : node.geometry.clone();
+      parts.push(geometry.applyMatrix4(node.matrixWorld)); byMaterial.set(node.material, parts);
     }
   });
   const compact = new THREE.Group();

@@ -22,7 +22,7 @@ CC0 1.0 Universal: https://creativecommons.org/publicdomain/zero/1.0/ . Download
 
 ## Lucide icons and runtime dependencies
 
-Lucide icons: ISC license, https://github.com/lucide-icons/lucide/blob/main/LICENSE . React: MIT; Three.js: MIT; Zustand: MIT. Dependency license copies will be included in THIRD_PARTY_NOTICES.md before release.
+Lucide icons: ISC license, https://github.com/lucide-icons/lucide/blob/main/LICENSE . React: MIT; Three.js: MIT; Zustand: MIT. Exact runtime dependency license texts are preserved in THIRD_PARTY_NOTICES.md and copied into production builds.
 
 ## Access restriction observed
 

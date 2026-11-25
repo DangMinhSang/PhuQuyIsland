@@ -6,26 +6,34 @@
     "dependencies": [],
     "assignedRole": "PROJECT_MANAGER",
     "acceptanceCriteria": [
-      "Implementation exists and relevant tests pass; evidence is recorded in docs/TEST_REPORT.md."
+      "Dedicated workspace and loopback preview do not modify unrelated host services.",
+      "Pinned React/TypeScript/Three.js/Vite stack has a successful production build and lint run.",
+      "Source, asset provenance and continuity files are committed in Git."
     ],
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "attempts": 1,
-    "lastUpdated": "2026-11-25T00:00:00Z"
+    "lastUpdated": "2026-11-25T14:04:08.792274+00:00",
+    "verification": [
+      "Production build and lint passed; 34 game/storage tests and eight Python tests passed before commit 9a59a92.",
+      "Commit 9a59a92 was pushed to GitHub main through SSH; source and licensing metadata are versioned."
+    ]
   },
   {
     "id": "G01",
-    "description": "Research and acquire Ph\u00fa Qu\u00fd geography",
+    "description": "Research and acquire Phú Quý geography",
     "priority": 2,
     "dependencies": [
       "F01"
     ],
     "assignedRole": "GEOGRAPHIC_RESEARCHER",
     "acceptanceCriteria": [
-      "Implementation exists and relevant tests pass; evidence is recorded in docs/TEST_REPORT.md."
+      "Ship the original OSM source and reproducible coastline/road processing with ODbL attribution.",
+      "Document geographic scale, sources, approximate elevation and fictional settlement values.",
+      "Verify coastline geometry and inspect recognizable coastline, hills, harbour and landmarks in the browser."
     ],
-    "status": "BACKLOG",
-    "attempts": 0,
-    "lastUpdated": "2026-11-25T00:00:00Z"
+    "status": "TESTING",
+    "attempts": 1,
+    "lastUpdated": "2026-11-25T14:04:08.792274+00:00"
   },
   {
     "id": "A01",
@@ -36,11 +44,13 @@
     ],
     "assignedRole": "ASSET_ACQUISITION_AGENT",
     "acceptanceCriteria": [
-      "Implementation exists and relevant tests pass; evidence is recorded in docs/TEST_REPORT.md."
+      "Every acquired model/dependency has a verified source, license, size and checksum.",
+      "Validate model structure, local dependencies and triangle budgets.",
+      "Verify intended model use and complete category coverage with licensed or original authored assets."
     ],
-    "status": "BACKLOG",
-    "attempts": 0,
-    "lastUpdated": "2026-11-25T00:00:00Z"
+    "status": "TESTING",
+    "attempts": 1,
+    "lastUpdated": "2026-11-25T14:04:08.792274+00:00"
   },
   {
     "id": "W01",
@@ -52,11 +62,13 @@
     ],
     "assignedRole": "WORLD_DESIGNER",
     "acceptanceCriteria": [
-      "Implementation exists and relevant tests pass; evidence is recorded in docs/TEST_REPORT.md."
+      "Render coastline, beach transitions, terrain hills, ocean, vegetation, settlement and landmarks without runtime errors.",
+      "Inspect desktop views for broken terrain, floating roads, occlusion and missing models.",
+      "Use shared resources and instancing; verify bounded geometry and texture counts during editing."
     ],
-    "status": "BACKLOG",
-    "attempts": 0,
-    "lastUpdated": "2026-11-25T00:00:00Z"
+    "status": "TESTING",
+    "attempts": 1,
+    "lastUpdated": "2026-11-25T14:04:08.792274+00:00"
   },
   {
     "id": "C01",
@@ -67,11 +79,14 @@
     ],
     "assignedRole": "GAMEPLAY_DEVELOPER",
     "acceptanceCriteria": [
-      "Implementation exists and relevant tests pass; evidence is recorded in docs/TEST_REPORT.md."
+      "Exercise camera pan, zoom, orbit and overview with actual browser input.",
+      "Build, rotate, inspect, move and remove buildings with cost, placement and collision validation.",
+      "Verify streets, avenues, curves, bridges, intersections and demolition preserve correct connectivity.",
+      "Paint all five zoning classes and verify demand-driven development."
     ],
-    "status": "BACKLOG",
-    "attempts": 0,
-    "lastUpdated": "2026-11-25T00:00:00Z"
+    "status": "TESTING",
+    "attempts": 1,
+    "lastUpdated": "2026-11-25T14:04:08.792274+00:00"
   },
   {
     "id": "S01",
@@ -82,11 +97,14 @@
     ],
     "assignedRole": "GAMEPLAY_DEVELOPER",
     "acceptanceCriteria": [
-      "Implementation exists and relevant tests pass; evidence is recorded in docs/TEST_REPORT.md."
+      "Verify growth and decline respond to housing, employment, six services, budget and happiness.",
+      "Verify taxes, upkeep, tourism, fishing, processing and maritime goods/passengers affect the daily ledger.",
+      "Verify traffic capacity, weather, pollution and port connectivity have meaningful consequences.",
+      "Pass deterministic endurance tests and document balancing assumptions."
     ],
-    "status": "BACKLOG",
-    "attempts": 0,
-    "lastUpdated": "2026-11-25T00:00:00Z"
+    "status": "TESTING",
+    "attempts": 1,
+    "lastUpdated": "2026-11-25T14:04:08.792274+00:00"
   },
   {
     "id": "U01",
@@ -98,11 +116,13 @@
     ],
     "assignedRole": "UI_DEVELOPER",
     "acceptanceCriteria": [
-      "Implementation exists and relevant tests pass; evidence is recorded in docs/TEST_REPORT.md."
+      "Verify main/new/continue/pause/settings/save screens and every management panel through the rendered UI.",
+      "Verify readable desktop HUD, tooltips, keyboard controls, visible feedback and compact viewport fit.",
+      "Inspect screenshots and fix visible overlaps, clipping, misplaced panels and unreadable labels."
     ],
-    "status": "BACKLOG",
-    "attempts": 0,
-    "lastUpdated": "2026-11-25T00:00:00Z"
+    "status": "TESTING",
+    "attempts": 1,
+    "lastUpdated": "2026-11-25T14:04:08.792274+00:00"
   },
   {
     "id": "P01",
@@ -113,11 +133,13 @@
     ],
     "assignedRole": "GAMEPLAY_DEVELOPER",
     "acceptanceCriteria": [
-      "Implementation exists and relevant tests pass; evidence is recorded in docs/TEST_REPORT.md."
+      "Pass versioned save validation, corruption recovery and settings tests.",
+      "Verify two manual slots, autosave, export, valid/invalid import and reload/continue in a real browser.",
+      "Failed loads/imports preserve the current island and expose an actionable error."
     ],
-    "status": "BACKLOG",
-    "attempts": 0,
-    "lastUpdated": "2026-11-25T00:00:00Z"
+    "status": "TESTING",
+    "attempts": 1,
+    "lastUpdated": "2026-11-25T14:04:08.792274+00:00"
   },
   {
     "id": "O01",
@@ -128,11 +150,13 @@
     ],
     "assignedRole": "PROJECT_MANAGER",
     "acceptanceCriteria": [
-      "Implementation exists and relevant tests pass; evidence is recorded in docs/TEST_REPORT.md."
+      "Verify exclusive worker locking, stale-process recovery and dependency/attempt limits.",
+      "Verify fake subprocess completion, timeout, resource pressure and log/token monitoring.",
+      "Dry run launches no worker; paid execution requires explicit bounded arguments."
     ],
-    "status": "BACKLOG",
-    "attempts": 0,
-    "lastUpdated": "2026-11-25T00:00:00Z"
+    "status": "TESTING",
+    "attempts": 1,
+    "lastUpdated": "2026-11-25T14:04:08.792274+00:00"
   },
   {
     "id": "Q01",
@@ -144,11 +168,20 @@
     ],
     "assignedRole": "QA_ENGINEER",
     "acceptanceCriteria": [
-      "Implementation exists and relevant tests pass; evidence is recorded in docs/TEST_REPORT.md."
+      "Pass production build, lint, game/storage/geometry tests, Python tests and asset validation.",
+      "Verify the full desktop gameplay/save flow and compact layout with screenshots and clean browser console/network.",
+      "Measure continuous rendering and repeated-edit resource counts; distinguish VPS software rendering from desktop performance.",
+      "Verify a clean dependency installation from the committed lockfile."
     ],
-    "status": "BACKLOG",
-    "attempts": 0,
-    "lastUpdated": "2026-11-25T00:00:00Z"
+    "status": "IN_PROGRESS",
+    "attempts": 1,
+    "lastUpdated": "2026-11-25T15:29:59.906893+00:00",
+    "verification": [
+      "Current production build, lint, 36 Vitest tests, eight Python tests and 17-model validation passed.",
+      "Existing full desktop gameplay/save flow and compact viewport passed in Playwright with seven screenshots and clean console/network.",
+      "Clean npm ci --ignore-scripts and npm ls passed after incomplete lockfile metadata repair.",
+      "Continuous rendering, repeat-edit lifecycle and remaining browser scenarios are still pending."
+    ]
   },
   {
     "id": "R01",
@@ -160,10 +193,13 @@
     ],
     "assignedRole": "PERFORMANCE_ENGINEER",
     "acceptanceCriteria": [
-      "Implementation exists and relevant tests pass; evidence is recorded in docs/TEST_REPORT.md."
+      "Resolve verified gameplay, visual and balance defects from QA.",
+      "Provide README, code license, third-party notices, release notes and a reproducible production artifact.",
+      "Configure free static hosting CI and verify deployed assets, WebGL and persistence on the public site.",
+      "Record release evidence and unresolved limitations; do not claim full completion without the master requirement audit."
     ],
     "status": "BACKLOG",
     "attempts": 0,
-    "lastUpdated": "2026-11-25T00:00:00Z"
+    "lastUpdated": "2026-11-25T14:04:08.792274+00:00"
   }
 ]

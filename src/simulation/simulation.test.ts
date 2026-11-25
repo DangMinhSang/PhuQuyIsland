@@ -118,6 +118,22 @@ describe('roads and functional connectivity', () => {
     const bridge = addRoad(game, points, 'bridge');
     expect(bridge.error).toBeNull(); expect(bridge.game.funds).toBe(game.funds - points.length * 400);
   });
+  it('clears every alignment at an intersection without leaving hidden access', () => {
+    const game = newGame(); game.buildings = [];
+    game.roads = [
+      { id: 'r1', kind: 'street', points: roadPath({ x: 0, z: 0 }, { x: 60, z: 0 }) },
+      { id: 'r2', kind: 'avenue', points: roadPath({ x: 30, z: -30 }, { x: 30, z: 30 }) },
+    ];
+    expect(routeBetween(makeNetwork(game.roads, []), '0,0', '30,30')).not.toEqual([]);
+    const cleared = demolish(game, { x: 30, z: 0 });
+    const network = makeNetwork(cleared.roads, []);
+    expect(cleared.roads).toHaveLength(4);
+    expect(network.nodes.has('30,0')).toBe(false);
+    expect(routeBetween(network, '0,0', '60,0')).toEqual([]);
+    expect(routeBetween(network, '30,-30', '30,30')).toEqual([]);
+    expect(new Set(cleared.roads.map(r => r.id)).size).toBe(4);
+    expect(cleared.roads.every(r => Number(r.id.slice(1)) < cleared.nextId)).toBe(true);
+  });
 });
 describe('consequential population, services and island economy', () => {
   it('grows a supplied settlement and applies daily budget exactly once', () => {

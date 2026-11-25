@@ -147,12 +147,16 @@ export function demolish(game: Game, p: Point): Game {
   let result = game;
   if (building) result = { ...game, buildings: game.buildings.filter(b => b.id !== building.id), funds: game.funds + (game.mode === 'sandbox' ? 0 : CATALOG[building.kind].cost * .25) };
   else {
-    const hit = game.roads.find(r => r.points.some(n => distance(n, p) < CELL * .65));
-    if (hit) {
+    let nextId = game.nextId;
+    // An intersection can belong to several alignments. Clear every occurrence
+    // so a hidden overlapping road cannot preserve access through the removed cell.
+    const roads = game.roads.flatMap(road => {
+      if (!road.points.some(n => distance(n, p) < CELL * .65)) return [road];
       const split: Point[][] = [[]];
-      for (const n of hit.points) { if (distance(n, p) < CELL * .65) split.push([]); else split[split.length - 1].push(n); }
-      result = { ...game, nextId: game.nextId + split.length, roads: [...game.roads.filter(r => r.id !== hit.id), ...split.filter(s => s.length >= 2).map((points, i) => ({ ...hit, id: 'r' + (game.nextId + i), points }))] };
-    }
+      for (const n of road.points) { if (distance(n, p) < CELL * .65) split.push([]); else split[split.length - 1].push(n); }
+      return split.filter(points => points.length >= 2).map(points => ({ ...road, id: 'r' + nextId++, points }));
+    });
+    result = { ...game, nextId, roads };
   }
   result = { ...result, zones: result.zones.filter(z => distance(z, p) >= CELL * .65) };
   result.metrics = metricsFor(result);
